@@ -28,6 +28,16 @@ exports.newChatStablised=functions.database.ref('/counsellorChats/{counsellorId}
 .onUpdate((snapshot,context)=>{
     const cid=context.params.counsellorId
     const count=snapshot.after.numChildren()
-    const parent =snapshot.after.ref.parent.parent.child('Counsellor').child(cid).child('clients')
+    const parent =snapshot.after.ref.parent.parent.child('counsellor').child(cid).child('clients')
     return parent.set(count);
 });
+
+exports.endSession=functions.database.ref('/client/{client_id}')
+.onUpdate((snapshot,context)=>{
+    const cid=snapshot.before.val().counsellor_id 
+    const client_i=context.params.client_id
+    console.log("cid",cid)
+    const parent=snapshot.before.ref.parent.parent.child("counsellorChats").child(cid).child(cid+client_i)
+    console.log("parent",parent)
+    return parent.remove();
+})
